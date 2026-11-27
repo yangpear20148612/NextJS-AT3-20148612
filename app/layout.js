@@ -1,18 +1,19 @@
 import "bootstrap/dist/css/bootstrap.min.css";
-// import Navbar from "@/components/Navbar";
+import Navbar from "../components/Navbar";
 
 export const metadata = {
-  title: "Project Workspace Dashboard",
-  description:
-    "Next.js App Router dashboard for managing projects, tasks, and people.",
+  title: "Workspace Dashboard",
+  description: "Next.js 15 App Router dashboard",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
-        {/* <Navbar /> */}
-        <main className="p-3">{children}</main>
+        <div className="d-md-flex min-vh-100">
+          <Navbar />
+          <main className="flex-grow-1 p-3">{children}</main>
+        </div>
       </body>
     </html>
   );

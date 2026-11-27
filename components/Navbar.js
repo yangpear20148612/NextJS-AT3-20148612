@@ -1,91 +1,124 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { usePathname } from "next/navigation";
+
+const navItems = [
+  { label: "Dashboard", href: "/" },
+  { label: "Projects", href: "/projects" },
+  { label: "Tasks", href: "/tasks" },
+  { label: "People", href: "/people" },
+  { label: "Library", href: "/library" },
+  { label: "About", href: "/about" },
+];
+
+function BrandHeader() {
+  return (
+    <div className="d-flex align-items-center gap-2">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="20"
+        height="20"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="3" y="3" width="7" height="9" rx="1" />
+        <rect x="14" y="3" width="7" height="5" rx="1" />
+        <rect x="14" y="12" width="7" height="9" rx="1" />
+        <rect x="3" y="16" width="7" height="5" rx="1" />
+      </svg>
+      <span className="fw-semibold">Workspace</span>
+    </div>
+  );
+}
 
 export default function Navbar() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const pathname = usePathname();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  useEffect(() => {
-    const token = sessionStorage.getItem("token");
-    const user = sessionStorage.getItem("user");
-    setIsLoggedIn(Boolean(token || user));
-  }, []);
-
-  const handleLogout = () => {
-    sessionStorage.removeItem("token");
-    sessionStorage.removeItem("user");
-    setIsLoggedIn(false);
+  const isActive = (href) => {
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   return (
-    <header className="border-bottom bg-light py-2 px-3">
-      <nav className="d-flex flex-wrap justify-content-between align-items-center gap-3">
-        {/* Logo + Brand */}
-        <Link
-          href="/"
-          className="d-flex align-items-center gap-2 text-decoration-none text-dark fw-bold"
-        >
-          <Image
-            src="/next.svg"
-            alt="Workspace Logo"
-            width={72}
-            height={18}
-            priority
-          />
-          <span>Dashboard</span>
-        </Link>
-
-        {/* Page Links in a Flex Row */}
-        <div className="d-flex flex-wrap align-items-center gap-3">
+    <>
+      {/* Mobile top bar (< md) */}
+      <div className="d-md-none border-bottom bg-light px-3 py-2">
+        <div className="d-flex align-items-center justify-content-between">
           <Link href="/" className="text-decoration-none text-dark">
-            Dashboard
+            <BrandHeader />
           </Link>
-          <Link href="/projects" className="text-decoration-none text-dark">
-            Projects
-          </Link>
-          <Link href="/tasks" className="text-decoration-none text-dark">
-            Tasks
-          </Link>
-          <Link href="/people" className="text-decoration-none text-dark">
-            People
-          </Link>
-          <Link href="/library" className="text-decoration-none text-dark">
-            Library
-          </Link>
-          <Link href="/about" className="text-decoration-none text-dark">
-            About
+
+          <button
+            type="button"
+            className="btn btn-outline-secondary btn-sm"
+            onClick={() => setMobileOpen((prev) => !prev)}
+            aria-expanded={mobileOpen}
+            aria-label="Toggle navigation"
+          >
+            Menu
+          </button>
+        </div>
+
+        {mobileOpen && (
+          <aside className="mt-2 pt-2 border-top">
+            <nav
+              aria-label="Mobile navigation"
+              className="nav flex-column gap-1"
+            >
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setMobileOpen(false)}
+                  className={`nav-link px-2 py-1 rounded ${
+                    isActive(item.href)
+                      ? "active bg-primary text-white fw-semibold"
+                      : "text-dark"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
+          </aside>
+        )}
+      </div>
+
+      {/* Desktop sidebar (>= md) */}
+      <aside
+        className="d-none d-md-flex flex-column border-end bg-light p-3"
+        style={{ width: "230px", minHeight: "100vh", flexShrink: 0 }}
+      >
+        <div className="pb-3 mb-3 border-bottom">
+          <Link href="/" className="text-decoration-none text-dark">
+            <BrandHeader />
           </Link>
         </div>
 
-        {/* Login / Session Status with Icon using Ternary */}
-        <div className="d-flex align-items-center gap-2">
-          {isLoggedIn ? (
-            <>
-              <span className="badge text-bg-success d-flex align-items-center gap-1">
-                <span>&#128100;</span>
-                <span>Logged In</span>
-              </span>
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="btn btn-outline-danger btn-sm"
-              >
-                Logout
-              </button>
-            </>
-          ) : (
+        <nav aria-label="Main navigation" className="nav flex-column gap-1">
+          {navItems.map((item) => (
             <Link
-              href="/login"
-              className="btn btn-primary btn-sm d-flex align-items-center gap-1"
+              key={item.href}
+              href={item.href}
+              className={`nav-link px-3 py-2 rounded ${
+                isActive(item.href)
+                  ? "active bg-primary text-white fw-semibold"
+                  : "text-dark"
+              }`}
             >
-              <span>&#128273;</span>
-              <span>Login</span>
+              {item.label}
             </Link>
-          )}
-        </div>
-      </nav>
-    </header>
+          ))}
+        </nav>
+      </aside>
+    </>
   );
 }
