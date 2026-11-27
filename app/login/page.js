@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
+// import Link from "next/link";
 import { login } from "../../lib/auth";
 
 export default function LoginPage() {
@@ -18,7 +18,7 @@ export default function LoginPage() {
     setSubmitting(true);
 
     try {
-      await login({ email, password });
+      await login(email, password);
       router.push("/");
       router.refresh();
     } catch (err) {
