@@ -48,8 +48,8 @@ export default function Navbar() {
           <Link href="/tasks" className="text-decoration-none text-dark">
             Tasks
           </Link>
-          <Link href="/users" className="text-decoration-none text-dark">
-            Users
+          <Link href="/people" className="text-decoration-none text-dark">
+            People
           </Link>
           <Link href="/library" className="text-decoration-none text-dark">
             Library
